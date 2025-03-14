@@ -5,7 +5,6 @@
 #include "searchers.h"
 #include "Hooks.h";
 #include "xorstr.hpp"
-#include "PluginConfig.h"
 #include "BSFunctions.h"
 #include "DatafileService.h"
 #ifdef _DEBUG
@@ -30,7 +29,6 @@ static void WINAPI ScannerSetup() {
 }
 
 static void WINAPI InitConfigValues() {
-	g_PluginConfig.ReloadFromConfig();
 }
 
 uintptr_t* BNSClientInstancePtr;
@@ -180,10 +178,8 @@ static __int64* WINAPI InitDetours() {
 	DetourTransactionBegin();
 	DetourUpdateThread(NtCurrentThread());
 
-	HookFunction(xorstr_("48 85 D2 0F 84 ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B F8 48 85 C0 0F 84 ?? ?? ?? ?? 4C 8B 03"), -0x15, oBUIWorld_ProcessEvent, &hkBUIWorld_ProcessEvent, "aBUIWorld_ProcessEvent");
 	auto pattern = xorstr_("0F B6 C0 85 C0 75 07 32 C0 E9 ?? 07 00 00 E8 ?? ?? ?? ?? 48 ?? ?? ?? ?? 00 00 00 48 ?? ?? ?? ?? 00 00 00 48 8B 00 48 8B ?? ?? ?? ?? 00 00 48 8B ?? ?? ?? ?? 00 00 FF 90 ?? 00 00 00 48 8B D0 48 ?? ?? ?? ??");
 	auto dataManagerPtr = HookDataManager(pattern, 0xF);
-	HookFunction(xorstr_("80 79 12 00 ?? ?? 48 8B 49 14 E9 ?? ?? ?? ?? 48 81 C1"), 0x00, oFind_b8, hkFind_b8, "Find_b8"); //shorter function
 	HookFunction(xorstr_("80 79 12 00 ?? ?? 48 8B 49 14 E9 ?? ?? ?? ?? 48 3B 91"), 0x00, oFind_b8AutoId, hkFind_b8AutoId, "Find_b8AutoId"); //longer function
 
 	GetFunctionPtr(xorstr_("48 8B 05 ?? ?? ?? ?? 48 85 C0 74 ?? 48 8B 80 ?? ?? ?? ?? C3 C3 CC CC CC CC CC CC CC CC CC CC CC 48 8B 05"), 0x00, BNSClient_GetWorld, "BNSClient_GetWorld");

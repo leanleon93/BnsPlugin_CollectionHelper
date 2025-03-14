@@ -22,6 +22,11 @@ void DatafileService::SetDataManagerPtr(__int64 const* ptr) {
 	this->dataManagerPtr = ptr;
 }
 
+__int16 DatafileService::GetZoneenv2TableId() const
+{
+	return zoneenv2TableId;
+}
+
 bool DatafileService::IsSetupComplete() const {
 	return SetupComplete;
 }
@@ -78,13 +83,29 @@ bool DatafileService::CompatabilityCheck() {
 	return true;
 }
 
+bool DatafileService::SetupTableIds()
+{
+	if (this->dataManagerPtr == nullptr || *this->dataManagerPtr == NULL) {
+		return false;
+	}
+	bool success = false;
+	const auto manager = reinterpret_cast<Data::DataManager*>(*this->dataManagerPtr);
+	if (const auto tableId = DataHelper::GetTableId(manager, L"zoneenv2"); tableId != 0) {
+		success = true;
+		zoneenv2TableId = tableId;
+	}
+	else {
+		success = false;
+	}
+	return success;
+}
+
 bool DatafileService::Setup() {
 	if (auto successVersionCheck = CompatabilityCheck(); !successVersionCheck) return false;
 	if (!AllVersionsSuccess()) {
 		MessageBox(nullptr, L"Plugin version is not 100% compatible with the game version.\nSome Features might not work but your game will not break.\nPlease update the plugin if available.", L"Plugin Version Mismatch", MB_OK | MB_ICONWARNING);
 	}
-	auto success = true;
-	//auto success = SetupSkillShowTableId();
+	auto success = SetupTableIds();
 	if (success) {
 		SetupComplete = true;
 	}

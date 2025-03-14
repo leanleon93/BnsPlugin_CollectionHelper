@@ -11,17 +11,20 @@ public:
 	bool IsCriticalFail() const;
 	Data::DataManager* GetDataManager();
 	void SetDataManagerPtr(__int64 const* ptr);
+	__int16 GetZoneenv2TableId() const;
 private:
+	__int16 zoneenv2TableId;
 	__int64 const* dataManagerPtr;
 	bool SetupComplete;
 	bool CriticalFail;
 	bool CompatabilityCheck();
+	bool SetupTableIds();
 	const std::unordered_set<std::wstring> usedTables = {
-		//L"skillshow3",
+		L"zoneenv2",
 	};
 
 	std::unordered_map<std::wstring, bool> versionCheckSuccess = {
-		//{ L"skillshow3", false },
+		{ L"zoneenv2", false },
 	};
 	bool AllVersionsSuccess() const;
 };
