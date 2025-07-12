@@ -56,13 +56,21 @@ void handleKeyEventWithModifiers(
 
 World* (__fastcall* BNSClient_GetWorld)();
 
-const wchar_t* newDefaultIndicatorImage2 = L"00008603.Envguide_5510_2";
-const wchar_t* newWeaponHolder2 = L"00009499.WeaponHolder";
-const wchar_t* newWeaponHolderOver2 = L"00009499.WeaponHolder_over";
+const wchar_t* jungIndicator = L"00008603.Envguide_5510_2";
+const wchar_t* jungIcon = L"00009499.WeaponHolder";
+const wchar_t* jungIconOver = L"00009499.WeaponHolder_over";
+
+const wchar_t* wonIndicator = L"00008603.Envguide_2000";
+const wchar_t* wonIcon = L"00009499.StoneLantern";
+const wchar_t* wonIconOver = L"00009499.StoneLantern_over";
 
 const wchar_t* gakIndicator = L"00008603.Envguide_4453";
 const wchar_t* gakIcon = L"00009499.Dungeon_FrozenArk_Lever";
 const wchar_t* gakIconOver = L"00009499.Dungeon_FrozenArk_Lever_over";
+
+const wchar_t* juIndicator = L"00008603.Envguide_3010";
+const wchar_t* juIcon = L"00009499.Dungeon_NaryuPole";
+const wchar_t* juIconOver = L"00009499.Dungeon_NaryuPole_over";
 
 const std::unordered_set<std::wstring> jungEntries = {
 	L"e_chest_jeryoungrim_collectD",
@@ -88,6 +96,25 @@ const std::unordered_set<std::wstring> juEntries = {
 	L"e_chest_Suwal_collectA"
 };
 
+void setChestRecordProperties(
+#ifdef _BNSKR
+	BnsTables::KR::zoneenv2_chest_Record* chestRecord,
+#elif _BNSEU
+	BnsTables::EU::zoneenv2_chest_Record* chestRecord,
+#endif
+	const wchar_t* indicator,
+	const wchar_t* icon,
+	const wchar_t* iconOver
+) {
+	chestRecord->default_indicator_image = const_cast<wchar_t*>(indicator);
+	chestRecord->mapunit_image_enable_close_true_imageset = const_cast<wchar_t*>(icon);
+	chestRecord->mapunit_image_enable_close_true_over_imageset = const_cast<wchar_t*>(iconOver);
+	chestRecord->mapunit_image_enable_close_false_imageset = const_cast<wchar_t*>(icon);
+	chestRecord->mapunit_image_enable_close_false_over_imageset = const_cast<wchar_t*>(iconOver);
+	chestRecord->mapunit_image_enable_open_imageset = const_cast<wchar_t*>(icon);
+	chestRecord->mapunit_image_enable_open_over_imageset = const_cast<wchar_t*>(iconOver);
+}
+
 /// <summary>
 /// Hook into Datamanager resolving a table reference
 /// </summary>
@@ -110,22 +137,16 @@ DrEl* __fastcall hkFind_b8AutoId(DrMultiKeyTable* thisptr, unsigned __int64 key)
 	chestRecord->init_enable = true;
 
 	if (gakEntries.contains(chestRecord->alias)) {
-		chestRecord->default_indicator_image = const_cast<wchar_t*>(gakIndicator);
-		chestRecord->mapunit_image_enable_close_true_imageset = const_cast<wchar_t*>(gakIcon);
-		chestRecord->mapunit_image_enable_close_true_over_imageset = const_cast<wchar_t*>(gakIconOver);
-		chestRecord->mapunit_image_enable_close_false_imageset = const_cast<wchar_t*>(gakIcon);
-		chestRecord->mapunit_image_enable_close_false_over_imageset = const_cast<wchar_t*>(gakIconOver);
-		chestRecord->mapunit_image_enable_open_imageset = const_cast<wchar_t*>(gakIcon);
-		chestRecord->mapunit_image_enable_open_over_imageset = const_cast<wchar_t*>(gakIconOver);
+		setChestRecordProperties(chestRecord, gakIndicator, gakIcon, gakIconOver);
 	}
-	else {
-		chestRecord->default_indicator_image = const_cast<wchar_t*>(newDefaultIndicatorImage2);
-		chestRecord->mapunit_image_enable_close_true_imageset = const_cast<wchar_t*>(newWeaponHolder2);
-		chestRecord->mapunit_image_enable_close_true_over_imageset = const_cast<wchar_t*>(newWeaponHolderOver2);
-		chestRecord->mapunit_image_enable_close_false_imageset = const_cast<wchar_t*>(newWeaponHolder2);
-		chestRecord->mapunit_image_enable_close_false_over_imageset = const_cast<wchar_t*>(newWeaponHolderOver2);
-		chestRecord->mapunit_image_enable_open_imageset = const_cast<wchar_t*>(newWeaponHolder2);
-		chestRecord->mapunit_image_enable_open_over_imageset = const_cast<wchar_t*>(newWeaponHolderOver2);
+	else if (jungEntries.contains(chestRecord->alias)) {
+		setChestRecordProperties(chestRecord, jungIndicator, jungIcon, jungIconOver);
+	}
+	else if (juEntries.contains(chestRecord->alias)) {
+		setChestRecordProperties(chestRecord, juIndicator, juIcon, juIconOver);
+	}
+	else if (wonEntries.contains(chestRecord->alias)) {
+		setChestRecordProperties(chestRecord, wonIndicator, wonIcon, wonIconOver);
 	}
 	chestRecord->mapunit_image_enable_close_true_size_x = 23;
 	chestRecord->mapunit_image_enable_close_true_size_y = 23;
@@ -135,8 +156,8 @@ DrEl* __fastcall hkFind_b8AutoId(DrMultiKeyTable* thisptr, unsigned __int64 key)
 	chestRecord->mapunit_image_enable_open_size_y = 23;
 	chestRecord->mapunit_image_disable_size_x = 23;
 	chestRecord->mapunit_image_disable_size_y = 23;
-	chestRecord->mapunit_image_unconfirmed_size_x = 23;
-	chestRecord->mapunit_image_unconfirmed_size_y = 23;
+	chestRecord->mapunit_image_unconfirmed_size_x = 18;
+	chestRecord->mapunit_image_unconfirmed_size_y = 18;
 
 	return recordBase;
 }
